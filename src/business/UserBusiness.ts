@@ -5,6 +5,7 @@ import { SignupInputDTO, SignupOutputDTO } from "../dtos/signup.dto";
 import { BadRequestError } from "../errors/BadRequestError";
 import { NotFoundError } from "../errors/NotFoundError";
 import { USER_ROLES, User } from "../models/User";
+import { HashManager } from "../services/HashManager";
 import { IdGenerator } from "../services/IdGenerator";
 import { TokenManager, TokenPayload } from "../services/TokenManager";
 
@@ -12,13 +13,23 @@ export class UserBusiness {
   constructor(
     private userDatabase: UserDatabase,
     private idGenerator: IdGenerator,
-    private tokenManager: TokenManager
+    private tokenManager: TokenManager,
+    private hashManager : HashManager
   ) {}
 
   public getUsers = async (
     input: GetUsersInputDTO
   ): Promise<GetUsersOutputDTO> => {
-    const { q } = input;
+    const { q, token } = input;
+    const payload = this.tokenManager.getPayload(token);
+
+    if(payload === null){
+      throw new NotFoundError("Token inválido.")
+    }
+    if(payload.role !== USER_ROLES.ADMIN){
+      throw new BadRequestError("Apenas Pessoas Admins podem acessar a lista de todos os usuários.")
+    }
+
     const usersDB = await this.userDatabase.findUsers(q);
 
     const users = usersDB.map((userDB) => {
@@ -42,13 +53,17 @@ export class UserBusiness {
     input: SignupInputDTO
   ):Promise<SignupOutputDTO>=>{
     const {name, email, password} = input;
+
     const id = this.idGenerator.generate();
+
+    const hashedPassword = await this.hashManager.hash(password);
+
 
     const newUser = new User(
         id,
         name,
         email,
-        password,
+        hashedPassword,
         USER_ROLES.NORMAL,
         new Date().toISOString(),
     )
@@ -82,19 +97,33 @@ export class UserBusiness {
       throw new NotFoundError("'email' não encontrado")
     }
 
-    if (password !== userDB.password) {
-      throw new BadRequestError("'email' ou 'password' incorretos")
+    const correctPassword = await this.hashManager.compare(password, userDB.password)
+    if(!correctPassword) {
+      throw new BadRequestError("'password' ou 'email' incorretos.")
     }
+
+    const user = new User(
+      userDB.id,
+      userDB.name,
+      userDB.email,
+      userDB.password,
+      userDB.role,
+      userDB.created_at
+    )
+
+    const tokenPayload: TokenPayload = {
+      id: user.getId(),
+      name: user.getName(),
+      role: user.getRole(),
+    }
+    const token = this.tokenManager.createToken(tokenPayload)
 
     const output: LoginOutputDTO = {
       message: "Login realizado com sucesso",
-      token: "token"
+      token: token
     }
 
     return output
   }
-
-
-
 
 }
