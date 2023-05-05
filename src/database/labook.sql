@@ -14,15 +14,20 @@ VALUES ('u002','Erick','erick@gmail.com','$2a$12$IGPJLjtZmS1Xc8QjBsQ8cuBev7YfUbM
 ('u003','larissa','larissa@gmail.com','$2a$12$hryk8XRB78HitI3N56UwF.Xj14IMF1jYVdgIla4/V0VYCCquWhHca','NORMAL');
 
 
+UPDATE users
+SET role = "ADMIN"
+WHERE id = "88a8959c-51b1-4395-bdb8-f0744143f6e8";
+
+
 
 SELECT * FROM posts;
 SELECT * FROM users;
-SELECT * FROM likes_deslikes;
+SELECT * FROM likes_dislikes;
 
 
 CREATE TABLE posts (
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
-    creator_id TEXT UNIQUE NOT NULL,
+    creator_id TEXT NOT NULL,
     content TEXT NOT NULL,
     likes INTEGER DEFAULT (0) NOT NULL,
     dislikes INTEGER DEFAULT (0) NOT NULL,
@@ -40,9 +45,9 @@ VALUES
 
 DROP TABLE users;
 DROP TABLE posts;
-DROP TABLE likes_deslikes;
+DROP TABLE likes_dislikes;
 
-CREATE TABLE likes_deslikes (
+CREATE TABLE likes_dislikes (
     user_id TEXT NOT NULL,
     post_id TEXT NOT NULL,
     like INTEGER NOT NULL,

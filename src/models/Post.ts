@@ -9,6 +9,17 @@ export interface PostDB {
     updated_at: string
 }
 
+export interface PostDBAndCreatorName {
+    id: string;
+    creator_id: string;
+    content: string;
+    likes: number;
+    dislikes: number;
+    created_at: string;
+    updated_at: string,
+    creator_name: string
+}
+
 export interface PostModel{
     id: string;
     content: string;
@@ -21,6 +32,18 @@ export interface PostModel{
         name:string
     }
 }
+
+export interface LikeDislikeDB {
+    user_id: string;
+    post_id: string;
+    like: number;
+}
+
+export enum POST_LIKE {
+    ALREADY_LIKED = "ALREDY_LIKED",
+    ALREADY_DISLIKED = "ALREDY_DISLIKED"
+}
+
 
 export class Post {
     constructor(
@@ -57,6 +80,22 @@ export class Post {
 
     public getUpdatedAt(): string { return this.updatedAt; }
     public setUpdatedAt(value: string) { this.updatedAt = value; }
+    
+    public addLike = () =>{
+        this.likes ++
+    }
+
+    public removeLike = () =>{
+        this.likes --
+    }
+
+    public addDislikes = () =>{
+        this.dislikes ++
+    }
+
+    public removeDislikes = () =>{
+        this.dislikes --
+    }
 
     public toPostDBModel():PostDB{
         return{
