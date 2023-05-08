@@ -1,4 +1,4 @@
--- Active: 1683152265250@@127.0.0.1@3306
+-- Active: 1683558638447@@127.0.0.1@3306
 
 CREATE TABLE users (
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
@@ -9,20 +9,21 @@ CREATE TABLE users (
     created_at TEXT DEFAULT (DATETIME()) NOT NULL
 );
 
-INSERT INTO users (id, name, email, password, role)
-VALUES ('u002','Erick','erick@gmail.com','$2a$12$IGPJLjtZmS1Xc8QjBsQ8cuBev7YfUbM6CNijZruzJRnsdbiyBqcPy','NORMAL'),
-('u003','larissa','larissa@gmail.com','$2a$12$hryk8XRB78HitI3N56UwF.Xj14IMF1jYVdgIla4/V0VYCCquWhHca','NORMAL');
-
 
 UPDATE users
 SET role = "ADMIN"
-WHERE id = "88a8959c-51b1-4395-bdb8-f0744143f6e8";
+WHERE id = "c0cac688-3060-4a0a-91a4-172aca483cf4";
+-- todas as contas de usuários são inicialmente criadas como tipo "NORMAL", caso queira ter uma conta "ADMIN", basta selecionar o id do usuário, trocar na querie acima e roda-la.
 
 
 
 SELECT * FROM posts;
 SELECT * FROM users;
 SELECT * FROM likes_dislikes;
+
+DROP TABLE users;
+DROP TABLE posts;
+DROP TABLE likes_dislikes;
 
 
 CREATE TABLE posts (
@@ -38,14 +39,6 @@ CREATE TABLE posts (
     ON DELETE CASCADE
 );
 
-INSERT INTO posts (id,creator_id,content)
-VALUES 
-        ('p002','u002','testando1'),
-        ('p003','u003','testando2');
-
-DROP TABLE users;
-DROP TABLE posts;
-DROP TABLE likes_dislikes;
 
 CREATE TABLE likes_dislikes (
     user_id TEXT NOT NULL,
@@ -58,13 +51,3 @@ CREATE TABLE likes_dislikes (
     ON UPDATE CASCADE 
     ON DELETE CASCADE
 );
-
-INSERT INTO likes_deslikes (user_id,post_id,like)
-VALUES  ('u003','p002',1),
-        ('u002','p002',1),
-        ('u002','p003',1);
-
-
-UPDATE posts
-SET likes = 2
-WHERE id = 'p002'
