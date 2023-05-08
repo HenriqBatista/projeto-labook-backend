@@ -163,6 +163,11 @@ export class PostBusiness{
     if(!postDBAndCreatorName){
         throw new NotFoundError("Post não encontrado.")
  }
+
+ if(postDBAndCreatorName.creator_name === payload.name){
+    throw new BadRequestError("O criador do post não pode dar Like ou Dislike na sua própria postagem")
+}
+
  const post = new Post(
     postDBAndCreatorName.id,
     postDBAndCreatorName.content,
