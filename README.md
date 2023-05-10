@@ -8,7 +8,7 @@ O Labook é uma rede social com o objetivo de promover a conexão e interação 
 <br>
 
 ## 🔗 Link da aplicação
-- Labecommerce API - [aqui.](https://documenter.getpostman.com/view/25826560/2s93eX1YwX)
+- Labook API - [aqui.](https://documenter.getpostman.com/view/25826560/2s93eX1YwX)
 
 <br>
 <br>
